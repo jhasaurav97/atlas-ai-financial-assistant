@@ -1,0 +1,51 @@
+# ================================
+# Atlas AI - Git Ignore
+# ================================
+
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Runtime / temporary files
+tmp/
+temp/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE / editor files
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+
+# AI coding assistant files
+.agents/
+.claude/
+.windsurf/
+
+# Prisma generated/runtime files
+.prisma/
+
+# Test / coverage
+coverage/
+
+# Build output
+dist/
+build/
+
+# Local Docker database data
+postgres-data/
+pgdata/

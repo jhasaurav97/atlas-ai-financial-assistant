@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --- THE ATLAS MEMORY ENGINE ---
+
+model AlertEvent {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  assetSymbol   String
+  alertType     String
+  changePercent Float
+  triggeredAt   DateTime @default(now())
+
+  @@index([userId, assetSymbol, alertType, triggeredAt])
+}
+
+model User {
+  id                 String             @id @default(uuid())
+  // BigInt is used because Telegram IDs can be huge numbers
+  telegramId         BigInt             @unique
+  firstName          String?
+  createdAt          DateTime           @default(now())
+  
+  // Relationships
+  conversations      Conversation[]
+  extractedMemories  ExtractedMemory[]
+  watchlists         Watchlist[]
+  alertEvents    AlertEvent[]      // 👈 Add this relation
+}
+
+model Conversation {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  sessionDate DateTime  @default(now())
+  
+  // Relationships
+  messages    Message[]
+}
+
+model Message {
+  id             String       @id @default(uuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  role           String       // Will store 'user' or 'atlas'
+  content        String
+  createdAt      DateTime     @default(now())
+}
+
+model ExtractedMemory {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  category  String   // e.g., 'interest', 'communication_style'
+  fact      String   // e.g., "User follows Nvidia"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 🛠️ The Magic: This prevents duplicate memories
+  @@unique([userId, category, fact])
+  // 🚀 Speed optimization for fetching memories quickly
+  @@index([userId])
+}
+
+model Watchlist {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  assetSymbol String   // e.g., 'NVDA', 'AAPL', 'BTC'
+  assetType   String   // e.g., 'stock', 'crypto'
+  addedAt     DateTime @default(now())
+}
