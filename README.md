@@ -2,478 +2,106 @@
 
 > **A proactive financial intelligence assistant that lives inside Telegram.**
 >
-> Atlas is designed to help finance professionals spend less time searching, reading, comparing, and monitoring financial information. Instead of behaving like a generic chatbot or forwarding financial news, Atlas combines conversational memory, multi-source financial data, regulatory filings, personalized context, and proactive watchlist monitoring to surface what actually matters.
+> Atlas reduces manual financial research by combining conversational memory, multi-source market intelligence, regulatory filings, personalized context, and proactive watchlist monitoring to surface only what actually matters.
 
 ---
 
-## Why Atlas?
+## 🧠 The Core Idea
 
-Financial professionals often have to switch between multiple sources to answer a simple question:
+Most financial chatbots simply answer questions.
 
-- What happened to a company today?
-- Why did the stock move?
-- Was there a new filing?
-- What is the latest relevant news?
-- Does this matter to the companies or sectors I follow?
-- Should I be notified about this movement?
+**Atlas is designed to understand the user first, gather the right evidence, and then reason over it.**
 
-Atlas brings that workflow into a single conversational interface.
+When a user asks a financial question, Atlas does not blindly send the message to an AI model. Its backend determines what information is actually required, retrieves relevant financial data from specialized sources, combines that evidence with the user's conversation history and long-term preferences, and then asks Gemini to produce the final response.
 
-The goal is **not to provide the most information**.
+This creates a simple intelligence loop:
 
-The goal is to provide the **right information at the right time**.
+```text
+User Message
+     ↓
+Understand Intent
+     ↓
+Retrieve Relevant Financial Evidence
+     ↓
+Combine With User Memory
+     ↓
+Gemini Reasoning
+     ↓
+Personalized Response
+     ↓
+Learn & Update Memory
+```
 
-Atlas follows three core principles:
+The result is a financial assistant that becomes more useful over time instead of behaving like a stateless chatbot.
 
-1. **Reduce manual work**
+---
+
+## 🎯 Core Philosophy
+
+Finance professionals don't need more information.
+
+They need the **right information, explained in the right context, at the right time.**
+
+Atlas is built around three principles:
+
+1. **Reduce manual research**
 2. **Prioritize signal over noise**
 3. **Respect the user's attention**
 
-If nothing important happened, Atlas should be comfortable staying silent.
+If there is no meaningful event, Atlas should remain silent instead of generating unnecessary notifications.
 
 ---
 
-# What Atlas Does
+## ⚡ Atlas vs. Typical Financial Chatbots
 
-Atlas understands natural-language financial requests such as:
+| Typical Financial Chatbot | Atlas AI |
+|---|---|
+| Waits for every question | Can proactively monitor important changes |
+| Stateless conversations | Persistent short-term and long-term memory |
+| Depends on a single source | Multi-source financial evidence |
+| Simply returns headlines | Explains **What Happened, Why It Matters, For You** |
+| Generic responses | Personalized using user interests and watchlists |
+| Notification-heavy | Uses significance thresholds and cooldowns |
+| Command-driven interaction | Natural-language conversation |
 
-> "What is the current price of Nvidia?"
+---
 
-> "What's the latest news about Nvidia?"
+## ✨ Key Capabilities
+
+### 1. Natural Conversational Interaction
+
+Users do not need to learn commands such as `/stock`, `/news`, or `/filing`.
+
+They can simply ask:
+
+> "What's happening with Nvidia today?"
 
 > "Any recent SEC filings for Nvidia?"
 
 > "Why did Nvidia move today?"
 
-> "I follow Apple and Microsoft."
-
-> "What companies do I follow?"
-
-> "Track Tesla and notify me when something important happens."
-
-The user does not need to remember commands, navigate menus, or learn a predefined workflow.
-
-Atlas determines what information is required, retrieves the relevant evidence, combines it with the user's context, and produces a concise response.
+Atlas determines what the user is asking and routes the request internally.
 
 ---
 
-# Key Capabilities
+### 2. Persistent Conversational Memory
 
-## 1. Natural Conversational Interaction
+Atlas maintains two levels of memory:
 
-Atlas is designed around natural language rather than command-driven workflows.
-
-Users can simply ask questions as they would ask a financial colleague.
-
-There are no financial slash commands such as:
-
-```text
-/stock NVDA
-/news NVDA
-/sec NVDA
-```
-
-Instead:
-
-```text
-"What's happening with Nvidia today?"
-```
-
-is enough.
-
-The backend determines the user's intent and selects the appropriate data sources.
-
----
-
-## 2. Persistent Conversational Memory
-
-Atlas remembers relevant context instead of treating every message as an isolated request.
-
-### Short-term memory
-
-Recent conversation history is stored in PostgreSQL and supplied to the AI when context is required.
-
-This allows conversations such as:
-
-```text
-User: Tell me about Nvidia.
-
-Atlas: ...
-
-User: Why did it move today?
-
-Atlas: ...
-```
-
-to remain connected without requiring the user to repeat the company name.
-
-### Long-term memory
-
-Atlas can extract meaningful user information from natural conversation.
+- **Short-term memory:** Recent conversation history for multi-turn context.
+- **Long-term memory:** User interests, preferences, and important facts extracted from natural conversation.
 
 For example:
 
 ```text
 User:
-I mainly follow Nvidia and AMD and I'm interested in AI infrastructure.
-```
+I follow Nvidia and AMD and I'm interested in AI infrastructure.
 
-Atlas can persist relevant information such as:
+Atlas:
+Understood.
 
-```text
-User follows Nvidia
-User follows AMD
-User is interested in AI infrastructure
-```
+Later...
 
-The information is stored in PostgreSQL rather than being kept only inside the current AI context.
-
-This allows Atlas to become more useful over time.
-
----
-
-# 3. Personalized Watchlists
-
-Users can naturally express what they follow:
-
-```text
-"I follow Nvidia, Apple and Microsoft."
-```
-
-Atlas can identify the relevant assets and maintain a persistent watchlist.
-
-The watchlist is then used by other parts of the system.
-
-For example, if Nvidia moves significantly, Atlas can connect the event to the user's existing interest rather than treating the event as generic market information.
-
----
-
-# 4. Multi-Source Financial Intelligence
-
-Atlas does not depend on a single financial data source.
-
-Different sources are used for different types of evidence.
-
-### Market Data
-
-**Finnhub**
-
-Used for market and company-level financial data.
-
-### Financial News
-
-**Marketaux**
-
-Used for recent financial news and company/entity-related market coverage.
-
-### Regulatory Information
-
-**SEC EDGAR**
-
-Used as the authoritative source for U.S. regulatory filings.
-
-Examples include:
-
-- 10-K
-- 10-Q
-- 8-K
-- Form 3
-- Form 4
-- Schedule 13D / 13G
-
-### Fallback Market Data
-
-**Yahoo Finance**
-
-Provides an additional market-data path when appropriate.
-
-This multi-source approach improves resilience and gives Atlas access to different forms of evidence rather than relying on one feed.
-
----
-
-# 5. Intent-Aware Data Retrieval
-
-Atlas does not blindly call every API for every message.
-
-The backend first determines what the user is asking for.
-
-For example:
-
-```text
-"What is NVDA's price?"
-        ↓
-Market Quote Intent
-        ↓
-Fetch market data
-        ↓
-Generate concise answer
-```
-
-While:
-
-```text
-"Any recent SEC filings for Nvidia?"
-        ↓
-SEC Filing Intent
-        ↓
-Fetch regulatory data
-        ↓
-Summarize relevant filings
-```
-
-And:
-
-```text
-"What companies do I follow?"
-        ↓
-Memory / Watchlist Intent
-        ↓
-Read PostgreSQL
-        ↓
-Return personalized context
-```
-
-This keeps unnecessary API calls and AI processing to a minimum.
-
----
-
-# 6. Contextual Financial Analysis
-
-Atlas does more than return raw financial data.
-
-For market-movement and research questions, the response is structured around three questions:
-
-### WHAT HAPPENED
-
-What changed?
-
-### WHY IT MATTERS
-
-Why is the development relevant?
-
-### FOR YOU
-
-Why might this matter specifically to this user based on their interests and watchlist?
-
-For example:
-
-```text
-WHAT HAPPENED:
-Nvidia moved higher based on the latest available market data and
-relevant AI infrastructure news.
-
-WHY IT MATTERS:
-The move is relevant because investors are continuing to evaluate
-AI infrastructure demand and semiconductor valuations.
-
-FOR YOU:
-Because you follow AI infrastructure companies, this development
-is relevant to the broader companies and supply chain you track.
-```
-
-This transforms raw data into decision-oriented context.
-
----
-
-# 7. Proactive Intelligence
-
-Atlas does not only wait for the user to ask a question.
-
-It can monitor persisted watchlists in the background.
-
-The monitoring engine evaluates watchlist assets and checks whether a meaningful price movement has occurred.
-
-The current significance threshold is:
-
-```text
-±3%
-```
-
-An alert is generated only when the movement reaches the configured threshold.
-
-This is intentional.
-
-Atlas is not designed to send:
-
-```text
-"Your stock moved 0.2%."
-```
-
-every few minutes.
-
-Instead, the product principle is:
-
-> **No meaningful event = no notification.**
-
----
-
-# 8. Alert Deduplication
-
-Proactive systems can easily become noisy.
-
-Atlas therefore maintains alert history in PostgreSQL.
-
-The system uses persisted alert events and a cooldown mechanism to prevent the same asset from repeatedly generating the same notification within the configured cooldown period.
-
-This means the alert system remains useful even when:
-
-- the server restarts
-- the monitoring cycle runs repeatedly
-- the same stock remains above the alert threshold
-
-The objective is simple:
-
-**Alert the user when something matters, not whenever the monitoring loop runs.**
-
----
-
-# 9. Telegram-Native Experience
-
-Telegram is used as the primary user interface.
-
-The backend handles:
-
-```text
-User Message
-     ↓
-Intent Detection
-     ↓
-Context Retrieval
-     ↓
-Financial Data Retrieval
-     ↓
-AI Reasoning
-     ↓
-Concise Response
-     ↓
-Telegram
-```
-
-The user does not need to understand the underlying services.
-
-The complexity stays inside the backend.
-
----
-
-# System Architecture
-
-```text
-                           TELEGRAM USER
-                                │
-                                ▼
-                     Natural Language Message
-                                │
-                                ▼
-                    ┌────────────────────────┐
-                    │      Atlas Backend     │
-                    │      Node.js/Express   │
-                    └────────────┬───────────┘
-                                 │
-                                 ▼
-                       ┌───────────────────┐
-                       │   Intent Router   │
-                       └─────────┬─────────┘
-                                 │
-              ┌──────────────────┼──────────────────┐
-              │                  │                  │
-              ▼                  ▼                  ▼
-        Market Data          Financial News      SEC Filings
-        Finnhub/Yahoo          Marketaux          SEC EDGAR
-              │                  │                  │
-              └──────────────────┼──────────────────┘
-                                 │
-                                 ▼
-                       Normalized Evidence
-                                 │
-                 ┌───────────────┴───────────────┐
-                 │                               │
-                 ▼                               ▼
-        PostgreSQL Context                 Gemini AI
-        ├─ Users                           ├─ Reasoning
-        ├─ Conversations                   ├─ Synthesis
-        ├─ Messages                        └─ Response
-        ├─ Long-term Memories
-        ├─ Watchlists
-        └─ Alert Events
-                 │                               │
-                 └───────────────┬───────────────┘
-                                 ▼
-                       Personalized Response
-                                 │
-                                 ▼
-                            TELEGRAM USER
-
-
-             ┌──────────────────────────────────┐
-             │     Background Intelligence      │
-             │                                  │
-             │       node-cron                  │
-             │            │                     │
-             │            ▼                     │
-             │       User Watchlists            │
-             │            │                     │
-             │            ▼                     │
-             │       Market Movement             │
-             │            │                     │
-             │            ▼                     │
-             │     Threshold + Cooldown          │
-             │            │                     │
-             │      Meaningful Event?            │
-             │         /          \               │
-             │       YES           NO             │
-             │        │             │             │
-             │        ▼             ▼             │
-             │      Alert         Stay Silent     │
-             └──────────────────────────────────┘
-```
-
----
-
-# Why Atlas Is Different
-
-Atlas is not designed to be another ChatGPT wrapper inside Telegram.
-
-The distinction is in the workflow.
-
-| Typical Financial Chatbot | Atlas |
-|---|---|
-| Waits for every question | Can proactively monitor important changes |
-| Stateless conversations | Persistent conversational memory |
-| Generic responses | Personalized responses |
-| Single data source | Multi-source financial evidence |
-| Forwards headlines | Explains why information matters |
-| Sends frequent notifications | Uses significance thresholds and cooldowns |
-| Requires commands | Natural-language interaction |
-| Treats every user the same | Learns relevant user interests |
-| Returns raw data | Converts data into useful context |
-| Optimizes for feature count | Optimizes for user time |
-
-### The central difference
-
-Atlas is built around one question:
-
-> **"Does this information actually help this user right now?"**
-
-If the answer is no, Atlas should not add more noise.
-
----
-
-# Example User Experience
-
-### User Interest
-
-```text
-User:
-I mainly follow Nvidia and AMD and I'm interested in AI infrastructure.
-```
-
-Atlas learns the relevant context.
-
----
-
-### Memory
-
-```text
 User:
 What companies do I follow?
 
@@ -481,646 +109,446 @@ Atlas:
 You currently follow Nvidia and AMD.
 ```
 
-The answer is generated from persistent application memory.
+This context is persisted in PostgreSQL rather than existing only inside a single AI request.
 
 ---
 
-### Live Market Question
+### 3. Personalized Watchlists
 
-```text
-User:
-What is the current price of NVDA?
-```
+Atlas can identify companies that users explicitly mention following and persist them as watchlist assets.
 
-Atlas retrieves the latest available market data rather than inventing a number.
+These watchlists are then used for:
 
----
+- Personalized financial analysis
+- Background monitoring
+- Proactive alerts
+- User-specific context
 
-### News Research
-
-```text
-User:
-What's the latest news for Nvidia?
-```
-
-Atlas retrieves relevant financial news and summarizes the information instead of simply forwarding headlines.
+This means the assistant gradually becomes more relevant without requiring a large onboarding form.
 
 ---
 
-### Regulatory Research
+### 4. Multi-Source Financial Intelligence
 
-```text
-User:
-Any recent SEC filings for Nvidia?
-```
+Atlas does not rely on a single financial data provider.
 
-Atlas checks the regulatory data source and returns relevant recent filings.
+It combines specialized sources depending on the user's request:
 
----
+| Source | Purpose |
+|---|---|
+| **Finnhub** | Market data and stock information |
+| **Marketaux** | Financial news and company/entity-related news |
+| **SEC EDGAR** | Official regulatory filings |
+| **Yahoo Finance** | Additional market-data fallback |
 
-### Market-Movement Analysis
-
-```text
-User:
-Why did Nvidia move today?
-```
-
-Atlas combines available market data, relevant financial information, and the user's stored context to produce a concise explanation.
+This gives Atlas multiple evidence sources instead of forcing every financial question through one provider.
 
 ---
 
-### Proactive Intelligence
+### 5. Intent-Aware Routing
 
-The user does not need to ask:
-
-```text
-"Check my watchlist."
-```
-
-Atlas can monitor it in the background.
-
-If an important movement occurs:
-
-```text
-🔔 Atlas Market Alert
-
-Atlas noticed a significant move in a company you follow.
-
-Marvell Technology (MRVL) is up 3.89% today.
-
-Current Price: $218.72
-```
-
-If the movement is not meaningful:
-
-```text
-No notification.
-```
-
-That silence is intentional.
-
----
-
-# Data & Memory Model
-
-Atlas uses PostgreSQL with Prisma ORM.
-
-## User
-
-Stores the Telegram identity and basic user information.
-
-```text
-User
- ├── telegramId
- ├── firstName
- └── createdAt
-```
-
-## Conversation
-
-Groups messages into conversational sessions.
-
-```text
-User
- └── Conversation
-       └── Messages
-```
-
-## Message
-
-Stores the actual conversation history.
-
-```text
-Message
- ├── role
- ├── content
- └── createdAt
-```
-
-## ExtractedMemory
-
-Stores useful long-term user information.
-
-```text
-ExtractedMemory
- ├── category
- ├── fact
- └── createdAt
-```
+Atlas has a backend intent layer that determines what information is required before calling external services.
 
 Examples:
 
 ```text
-interest → User is interested in AI infrastructure
-preference → User prefers concise answers
-interest → User follows semiconductor companies
+"What is NVDA's price?"
+        ↓
+Market Quote
 ```
 
-## Watchlist
-
-Stores assets the user explicitly follows.
-
 ```text
-Watchlist
- ├── assetSymbol
- ├── assetType
- └── addedAt
+"What's the latest Nvidia news?"
+        ↓
+Financial News
 ```
 
-## AlertEvent
-
-Stores proactive notifications and supports cooldown/deduplication.
+```text
+"Any recent SEC filings for Nvidia?"
+        ↓
+SEC Filings
+```
 
 ```text
-AlertEvent
- ├── assetSymbol
- ├── alertType
- ├── changePercent
- └── triggeredAt
+"Why did Nvidia move today?"
+        ↓
+Market Data + News + User Context
+```
+
+```text
+"How are you?"
+        ↓
+General Conversation
+```
+
+This prevents unnecessary API calls and allows each financial request to use the most relevant data source.
+
+---
+
+### 6. Contextual Financial Reasoning
+
+For market-research questions, Atlas structures its analysis around three questions:
+
+```text
+WHAT HAPPENED
+     ↓
+What changed in the market?
+
+WHY IT MATTERS
+     ↓
+What does the available evidence suggest?
+
+FOR YOU
+     ↓
+Why is this relevant to this particular user?
+```
+
+For example, if a user has expressed interest in AI infrastructure and asks about Nvidia, Atlas can connect Nvidia's market movement with the user's stored interests rather than returning a generic market summary.
+
+---
+
+### 7. Proactive Intelligence
+
+Atlas does not only wait for users to ask questions.
+
+A background monitoring process checks assets in the user's watchlist and looks for meaningful price movements.
+
+The current demo configuration uses:
+
+```text
+Significance threshold: ±3%
+Alert cooldown: 6 hours
+```
+
+If the movement is not significant, Atlas stays silent.
+
+If the threshold is reached, Atlas can proactively notify the user.
+
+A database-backed `AlertEvent` record prevents repeated notifications for the same asset during the cooldown period, including across application restarts.
+
+---
+
+## 🏗️ System Architecture
+
+```text
+                         TELEGRAM USER
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │   Natural Language  │
+                    │       Message       │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │    Intent Router    │
+                    └──────────┬──────────┘
+                               │
+              ┌────────────────┼────────────────┐
+              ▼                ▼                ▼
+        Market Data       Financial News    SEC Filings
+       Finnhub / Yahoo      Marketaux        SEC EDGAR
+              │                │                │
+              └────────────────┼────────────────┘
+                               ▼
+                    ┌─────────────────────┐
+                    │  Financial Evidence │
+                    │       Layer         │
+                    └──────────┬──────────┘
+                               │
+              ┌────────────────┴────────────────┐
+              ▼                                 ▼
+       PostgreSQL Memory                   Retrieved Data
+       ├─ Conversation History                  │
+       ├─ Long-Term Memories                    │
+       ├─ Watchlists                            │
+       └─ Alert Events                          │
+              │                                 │
+              └────────────────┬────────────────┘
+                               ▼
+                    ┌─────────────────────┐
+                    │     Gemini AI       │
+                    │  Reasoning Layer    │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    Personalized Telegram
+                         Response
 ```
 
 ---
 
-# Technology Stack
+## 🛠️ Tech Stack
 
 ### Backend
 
 - Node.js
 - Express.js
 - ES Modules
-
-### AI
-
 - Google Gemini API
-- Structured AI responses
-- Context-aware prompt orchestration
-
-### Database
-
-- PostgreSQL
 - Prisma ORM
-
-### Financial Intelligence
-
-- Finnhub
-- Marketaux
-- SEC EDGAR
-- Yahoo Finance
+- PostgreSQL
+- Docker
 
 ### Telegram
 
-- node-telegram-bot-api
+- `node-telegram-bot-api`
 
 ### Background Processing
 
-- node-cron
+- `node-cron`
 
-### Infrastructure
+### Financial Intelligence
 
-- Docker
-- Google Cloud
-- Cloud Run
-- Cloud SQL PostgreSQL
+- Finnhub API
+- Marketaux API
+- SEC EDGAR API
+- Yahoo Finance via `yahoo-finance2`
+
+### Development
+
+- Git
+- GitHub
+- Nodemon
 
 ---
 
-# Project Structure
+## 🗄️ Data Model
+
+Atlas uses PostgreSQL with Prisma ORM to persist user context and application state.
+
+| Model | Purpose |
+|---|---|
+| **User** | Telegram identity and user metadata |
+| **Conversation / Message** | Recent conversation history for short-term context |
+| **ExtractedMemory** | Long-term facts and preferences learned from conversation |
+| **Watchlist** | Companies/assets explicitly followed by the user |
+| **AlertEvent** | Proactive notification history and cooldown tracking |
+
+### Example Long-Term Memories
 
 ```text
-atlas-ai-financial-assistant/
-│
-├── prisma/
-│   ├── migrations/
-│   └── schema.prisma
-│
-├── src/
-│   ├── app.js
-│   ├── index.js
-│   │
-│   └── services/
-│       ├── aiService.js
-│       ├── cronService.js
-│       ├── financialDataService.js
-│       ├── financialService.js
-│       ├── intentService.js
-│       └── memoryService.js
-│
-├── .env.example
-├── .gitignore
-├── docker-compose.yml
-├── package.json
-├── package-lock.json
-└── prisma.config.ts
+User follows Nvidia
+User is interested in AI infrastructure
+User prefers concise responses
 ```
 
 ---
 
-# Local Development
+## 🔐 Environment Variables
 
-## Requirements
+Create a `.env` file in the project root:
 
-- Node.js
-- npm
-- Docker Desktop
-- PostgreSQL through Docker
-- Telegram Bot Token
-- Gemini API Key
-- Finnhub API Key
-- Marketaux API Key
+```env
+PORT=3000
+
+# Telegram
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token
+
+# Gemini
+GEMINI_API_KEY=your_gemini_api_key
+GEMINI_MODEL=gemini-2.5-flash
+
+# Financial APIs
+FINNHUB_API_KEY=your_finnhub_api_key
+MARKETAUX_API_KEY=your_marketaux_api_key
+
+# SEC
+SEC_USER_AGENT="AtlasAI your-email@example.com"
+
+# PostgreSQL
+DATABASE_URL="postgresql://username:password@localhost:5432/atlas_db?schema=public"
+```
+
+> **Never commit `.env` or API keys to GitHub.**
 
 ---
 
-## 1. Clone
+## 🚀 Quick Start
+
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/jhasaurav97/atlas-ai-financial-assistant.git
 cd atlas-ai-financial-assistant
 ```
 
----
-
-## 2. Install dependencies
+### 2. Install Dependencies
 
 ```bash
 npm install
 ```
 
----
+### 3. Start PostgreSQL
 
-## 3. Configure environment variables
-
-Create a `.env` file in the project root.
-
-Use `.env.example` as the reference.
-
-```env
-PORT=3000
-
-TELEGRAM_BOT_TOKEN=your_telegram_bot_token
-
-GEMINI_API_KEY=your_gemini_api_key
-GEMINI_MODEL=your_configured_gemini_model
-
-FINNHUB_API_KEY=your_finnhub_api_key
-MARKETAUX_API_KEY=your_marketaux_api_key
-
-SEC_USER_AGENT="AtlasAI your-email@example.com"
-
-DATABASE_URL="postgresql://username:password@localhost:5432/atlas_db?schema=public"
-```
-
-**Never commit `.env` or API keys to GitHub.**
-
----
-
-## 4. Start PostgreSQL
-
-If using the included Docker setup:
+If using the included Docker configuration:
 
 ```bash
 docker compose up -d
 ```
 
-Verify the containers are running:
+### 4. Configure Environment Variables
 
-```bash
-docker compose ps
-```
+Create `.env` and add the required:
 
----
+- Telegram bot token
+- Gemini API key
+- Finnhub API key
+- Marketaux API key
+- SEC User-Agent
+- PostgreSQL connection string
 
-## 5. Apply Prisma migrations
+### 5. Run Prisma Migrations
 
 ```bash
 npx prisma migrate dev
-```
-
-Generate the Prisma client:
-
-```bash
 npx prisma generate
 ```
 
----
+### 6. Start Atlas
 
-## 6. Start Atlas
+Development:
 
 ```bash
 npm run dev
 ```
 
-Atlas should now connect to Telegram and begin processing messages.
+Production:
 
----
-
-# Environment Security
-
-Atlas keeps credentials outside the source code.
-
-Sensitive values include:
-
-```text
-TELEGRAM_BOT_TOKEN
-GEMINI_API_KEY
-FINNHUB_API_KEY
-MARKETAUX_API_KEY
-DATABASE_URL
+```bash
+npm start
 ```
 
-These values belong in environment variables and must never be committed to source control.
-
-The repository includes:
-
-```text
-.env.example
-```
-
-so the required configuration remains clear without exposing credentials.
+Once the server is running, open the Telegram bot and start asking financial questions naturally.
 
 ---
 
-# Reliability & Resilience
+## 🎬 Demo Flow
 
-Atlas is designed to avoid depending on a single component for every workflow.
+The following conversation demonstrates the main Atlas intelligence loop.
 
-### Multiple financial sources
-
-Different sources are used for different types of financial evidence.
-
-### Graceful AI failures
-
-AI/API failures return a controlled response instead of crashing the Telegram message handler.
-
-### Persistent database state
-
-User memory, watchlists, conversations, and alert events survive application restarts.
-
-### Alert cooldown
-
-The proactive monitor uses persisted alert history to reduce repeated notifications.
-
-### Intent-based retrieval
-
-The backend retrieves information according to the user's request rather than querying every source for every message.
-
-### Silence as a valid result
-
-The monitoring system can intentionally produce no user-facing notification when an event does not meet the significance threshold.
-
----
-
-# Product Design Philosophy
-
-Atlas deliberately avoids feature overload.
-
-The product is based on a simple principle:
-
-> **Every interaction should save the user time.**
-
-Therefore Atlas prioritizes:
-
-- concise answers
-- relevant information
-- contextual explanations
-- natural conversation
-- persistent useful memory
-- personalized insights
-- meaningful proactive alerts
-
-Instead of:
-
-- excessive reports
-- unnecessary notifications
-- command-heavy workflows
-- long generic summaries
-- information that does not affect the user's decision
-
----
-
-# Current Scope
-
-The current implementation focuses on the highest-value financial assistant workflows:
-
-### Implemented
-
-- Telegram conversational interface
-- Natural-language interaction
-- Persistent users
-- Short-term conversation memory
-- Long-term extracted memory
-- Persistent watchlists
-- Intent-based routing
-- Market quote retrieval
-- Financial news retrieval
-- SEC filing retrieval
-- Multi-source financial context
-- Personalized financial responses
-- Market-movement analysis
-- Proactive watchlist monitoring
-- Significance threshold alerts
-- Alert cooldown/deduplication
-- PostgreSQL persistence
-- Prisma migrations
-- Docker-based local database
-- Google Cloud deployment architecture
-
----
-
-# Future Expansion
-
-Atlas is intentionally designed so additional capabilities can be added without changing the core product model.
-
-Potential extensions include:
-
-### Voice Intelligence
-
-Allow users to send Telegram voice messages and convert them into financial queries.
-
-### Document Intelligence
-
-Allow users to upload:
-
-- annual reports
-- earnings presentations
-- financial models
-- SEC documents
-- research PDFs
-
-and ask questions directly about the uploaded material.
-
-### Earnings Intelligence
-
-Automatically summarize earnings calls and highlight:
-
-- guidance changes
-- management commentary
-- risks
-- opportunities
-- sentiment changes
-
-### Personalized Daily Briefings
-
-Generate a concise morning briefing based on the user's actual watchlist and interests.
-
-The briefing would be selective rather than a generic news dump.
-
-### Calendar & Email Intelligence
-
-Connect relevant work context such as:
-
-- earnings calls
-- investor meetings
-- company-related emails
-- research documents
-
-and surface only information that helps the user prepare or act.
-
----
-
-# Demo Flow
-
-The recommended demonstration follows the actual product journey.
-
-## 1. Introduce Atlas
-
-Show Atlas inside Telegram and explain:
-
-> "Atlas is designed as a proactive financial intelligence assistant, not a generic chatbot."
-
----
-
-## 2. Establish User Context
-
-Tell Atlas:
+### 1. Establish User Context
 
 ```text
 I follow Nvidia and AMD and I'm interested in AI infrastructure.
 ```
 
----
-
-## 3. Prove Memory
-
-Ask:
+### 2. Test Long-Term Memory
 
 ```text
 What companies do I follow?
 ```
 
-Atlas retrieves the persisted context.
+Atlas should retrieve the stored context rather than treating the message as a completely new conversation.
 
----
-
-## 4. Ask for Live Market Data
-
-Ask:
+### 3. Retrieve Market Data
 
 ```text
 What is the current price of NVDA?
 ```
 
-Show the financial data retrieval.
-
----
-
-## 5. Ask for Research
-
-Ask:
+### 4. Retrieve Financial News
 
 ```text
 What's the latest news for Nvidia?
 ```
 
-Show the multi-source financial research response.
-
----
-
-## 6. Ask for Regulatory Information
-
-Ask:
+### 5. Retrieve Regulatory Information
 
 ```text
 Any recent SEC filings for Nvidia?
 ```
 
-Show the regulatory filing lookup.
-
----
-
-## 7. Ask for Analysis
-
-Ask:
+### 6. Cross-Source Financial Reasoning
 
 ```text
 Why did Nvidia move today?
 ```
 
-Show:
+This demonstrates Atlas combining available market information, financial news, regulatory context, and user memory to produce a personalized analysis.
+
+### 7. Proactive Intelligence
+
+Leave the bot running with a populated watchlist.
+
+Atlas's background monitor checks for significant movements and sends an alert when the configured threshold is reached.
+
+The alert cooldown prevents repeated notifications from becoming spam.
+
+---
+
+## 💡 Why Atlas Is Different
+
+Atlas is intentionally not designed as another generic "ask AI about stocks" bot.
+
+Its intelligence comes from the **orchestration layer around the AI model**:
 
 ```text
-WHAT HAPPENED
-WHY IT MATTERS
-FOR YOU
+                         Gemini
+                           ▲
+                           │
+                  Reasoning + Synthesis
+                           │
+              ┌────────────┴────────────┐
+              │                         │
+       Financial Evidence         User Context
+              │                         │
+       ┌──────┼──────┐            ┌────┴────┐
+       │      │      │            │         │
+    Finnhub Marketaux SEC      Memory   Watchlist
+              │
+              ▼
+         Atlas Backend
 ```
 
-This demonstrates that Atlas is synthesizing information rather than simply forwarding a quote.
+The model is only one part of the system.
+
+The backend decides:
+
+- **What the user is asking**
+- **Which data source is relevant**
+- **What user context matters**
+- **What information should be sent to the AI**
+- **When the assistant should proactively speak**
+- **When it should remain silent**
+
+That is what turns Atlas from a simple chatbot into a **financial intelligence system**.
 
 ---
 
-## 8. Demonstrate Proactive Intelligence
+## 🔮 Future Improvements
 
-Show the watchlist monitor running in the background.
+The current implementation focuses on the highest-value financial intelligence workflow.
 
-Explain:
+Potential future extensions include:
 
-> "Atlas doesn't notify me every time a price changes. It checks whether the movement is meaningful and uses persistent cooldown state to avoid notification spam."
+- Telegram voice-message transcription and analysis
+- Financial document and PDF intelligence
+- Earnings-call summarization
+- Portfolio-level risk analysis
+- More sophisticated event detection
+- Additional market-data providers
+- Persistent user notification preferences
+- Cloud-native background job processing
+- More advanced alert prioritization
 
-Then demonstrate a qualifying alert.
-
----
-
-# Why This Architecture Matters
-
-The important part of Atlas is not any individual API.
-
-It is the orchestration between them.
-
-```text
-Conversation
-      +
-User Memory
-      +
-Watchlist
-      +
-Intent
-      +
-Market Data
-      +
-Financial News
-      +
-Regulatory Evidence
-      +
-AI Reasoning
-      +
-Proactive Monitoring
-      =
-Personalized Financial Intelligence
-```
-
-This is what turns Atlas from a Telegram chatbot into an assistant designed around a real financial workflow.
+These extensions can be added without replacing the existing intelligence pipeline.
 
 ---
 
-# Disclaimer
+## ⚠️ Disclaimer
 
-Atlas is a software demonstration for financial information and research workflows.
+Atlas AI is a software demonstration and is **not a financial advisor**.
 
-Market data can be delayed or unavailable, and financial information may contain errors or omissions.
-
-Atlas is **not a financial advisor** and should not be treated as a substitute for professional financial advice or independent verification.
+Market data may be delayed or subject to third-party provider limitations. Users should independently verify financial information before making investment decisions.
 
 ---
 
-# License
+## 👨‍💻 Built By
 
-This project was created as a hackathon project and demonstration of an AI-powered financial intelligence workflow.
+**Saurav Jha**
+
+Full Stack Developer focused on building practical, intelligent backend systems with Node.js, React, PostgreSQL, APIs, and AI.
+
+**Repository:**  
+https://github.com/jhasaurav97/atlas-ai-financial-assistant
