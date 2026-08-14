@@ -4,7 +4,21 @@
 >
 > Atlas reduces manual financial research by combining conversational memory, multi-source market intelligence, regulatory filings, personalized context, and proactive watchlist monitoring to surface only what actually matters.
 
----
+## 🌐 Live Demo & Project Links
+
+**Live Telegram Bot:**  
+https://t.me/AtlasFinancialAssistantBot
+
+**Hosted Backend (Render):**  
+https://atlas-ai-financial-assistant-zrtk.onrender.com
+
+**GitHub Repository:**  
+https://github.com/jhasaurav97/atlas-ai-financial-assistant
+
+**Demo Video (Loom):**  
+https://www.loom.com/share/94998c29ad4445be9eaf87e8a120d294
+
+> **Quick Testing Note:** The backend is hosted on Render's free tier and may enter a temporary sleep state when idle. **Before testing the Telegram bot, open the Render backend URL once** to wake the service. After it becomes active, return to Telegram and test the bot normally.
 
 ## 🧠 The Core Idea
 
