@@ -6,19 +6,25 @@
 
 ## 🌐 Live Demo & Project Links
 
-**Live Telegram Bot:**  
-https://t.me/AtlasFinancialAssistantBot
+> ⚠️ **IMPORTANT: Before testing the Telegram bot**
+>
+> The Atlas backend is hosted on Render's free tier and may temporarily sleep after inactivity.
+>
+> **Please open the Render backend URL below first and wait for the service to wake up. Then open the Telegram bot and start testing.**
+>
+> This is only required when the backend has gone idle. Once the service is awake, the Telegram bot can be used normally.
 
 **Hosted Backend (Render):**  
 https://atlas-ai-financial-assistant-zrtk.onrender.com
 
-**GitHub Repository:**  
-https://github.com/jhasaurav97/atlas-ai-financial-assistant
+**Live Telegram Bot:**  
+https://t.me/AtlasFinancialAssistantBot
 
 **Demo Video (Loom):**  
 https://www.loom.com/share/94998c29ad4445be9eaf87e8a120d294
 
-> **Quick Testing Note:** The backend is hosted on Render's free tier and may enter a temporary sleep state when idle. **Before testing the Telegram bot, open the Render backend URL once** to wake the service. After it becomes active, return to Telegram and test the bot normally.
+**GitHub Repository:**  
+https://github.com/jhasaurav97/atlas-ai-financial-assistant
 
 ## 🧠 The Core Idea
 
